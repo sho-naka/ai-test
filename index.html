@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AIフィット診断 | あなたに合うAIはどれ？</title>
+<meta name="color-scheme" content="light dark">
+<style>
+:root{--bg:#f7f7fb;--text:#0f172a;--muted:#6b7280;--card:#ffffff;--border:#e5e7eb;--primary:#2563eb;--primary-contrast:#ffffff;--accent:#22c55e;--shadow:0 8px 24px rgba(2,6,23,.08);--radius:16px}
+@media (prefers-color-scheme:dark){:root{--bg:#0b1020;--text:#e5e7eb;--muted:#9aa4b2;--card:#0f162c;--border:#1f2a44;--primary:#3b82f6;--primary-contrast:#0b1020;--accent:#10b981;--shadow:0 8px 24px rgba(0,0,0,.45)}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP",Hiragino Kaku Gothic ProN,Meiryo,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";line-height:1.6}
+.container{max-width:1100px;margin:0 auto;padding:24px}
+header{position:sticky;top:0;backdrop-filter:saturate(1.2) blur(8px);background-color:color-mix(in oklab, var(--bg) 90%, transparent);border-bottom:1px solid var(--border);z-index:10}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 24px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800}
+.brand .dot{width:10px;height:10px;border-radius:999px;background:linear-gradient(135deg,var(--primary),var(--accent))}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;border-radius:999px;border:1px solid transparent;background:var(--primary);color:var(--primary-contrast);text-decoration:none;font-weight:700;box-shadow:var(--shadow);transition:transform .06s ease,opacity .2s ease}
+.btn.secondary{background:transparent;color:var(--text);border-color:var(--border)}
+.btn:disabled{opacity:.5;pointer-events:none}
+.btn:active{transform:translateY(1px)}
+.hero{padding:72px 24px 36px;background:radial-gradient(1200px 600px at 20% -10%, color-mix(in oklab,var(--primary) 25%, transparent), transparent),radial-gradient(1000px 500px at 120% 0%, color-mix(in oklab,var(--accent) 25%, transparent), transparent)}
+.hero h1{font-size:clamp(28px,4vw,44px);line-height:1.15;margin:0 0 14px}
+.hero p{color:var(--muted);margin:0 0 22px}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap}
+.section{padding:28px 0}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:900px){.grid{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.card h3{margin:0 0 8px;font-size:18px}
+.card p{margin:0;color:var(--muted)}
+#wizard{scroll-margin-top:84px}
+.step{display:none}
+.step.active{display:block}
+.step-title{font-size:20px;font-weight:800;margin:0 0 8px}
+.required{display:inline-block;margin-left:8px;font-size:12px;color:var(--primary);background:color-mix(in oklab,var(--primary) 10%, transparent);padding:2px 8px;border-radius:999px}
+.opts{display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--border);padding:12px;border-radius:12px;transition:background .2s,border-color .2s}
+.opt input{margin-top:4px}
+.opt:hover{border-color:color-mix(in oklab,var(--primary) 40%, var(--border))}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px}
+.progress{height:10px;background:color-mix(in oklab,var(--border) 60%, transparent);border-radius:999px;overflow:hidden;border:1px solid var(--border)}
+.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--primary),var(--accent))}
+.meta{display:flex;justify-content:space-between;align-items:center;margin:10px 0 14px;color:var(--muted);font-size:13px}
+.result{display:none}
+.result.active{display:block}
+.top-ai{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:6px 0 14px}
+.top-ai-badge{padding:6px 10px;border-radius:999px;background:linear-gradient(135deg,var(--primary),var(--accent));color:var(--primary-contrast);font-weight:800}
+.bars{display:grid;gap:10px}
+.bar{display:grid;gap:6px}
+.bar-label{display:flex;justify-content:space-between;font-weight:700}
+.bar-track{height:12px;border-radius:999px;background:color-mix(in oklab,var(--border) 60%, transparent);overflow:hidden;border:1px solid var(--border)}
+.bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--primary),var(--accent))}
+.kicker{color:var(--muted);font-size:13px}
+.copy{display:flex;gap:8px;align-items:center;margin-top:10px}
+.copy input{flex:1;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text)}
+.small{font-size:12px;color:var(--muted)}
+footer{padding:36px 24px;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner container">
+    <div class="brand"><span class="dot"></span><span>AIフィット診断</span></div>
+    <a class="btn secondary" href="#wizard">診断をはじめる</a>
+  </div>
+</header>
+<section class="hero">
+  <div class="container">
+    <h1>あなたに合うAIを、1分で診断</h1>
+    <p>目的・使い方・連携や予算の好みからスコアリング。ブラウザだけで完結し、共有リンクもワンクリックで作成できます。</p>
+    <div class="hero-cta">
+      <a class="btn" href="#wizard">無料で診断する</a>
+      <a class="btn secondary" href="#features">しくみを見る</a>
+    </div>
+  </div>
+</section>
+<section id="features" class="section">
+  <div class="container grid">
+    <div class="card"><h3>かんたん</h3><p>6ステップで完了。各設問は必須です。</p></div>
+    <div class="card"><h3>ブラウザ完結</h3><p>サーバー送信なし。URL共有にも対応。</p></div>
+    <div class="card"><h3>見やすい結果</h3><p>トップのAIと上位3件をバー比較。</p></div>
+  </div>
+</section>
+<section id="wizard" class="section">
+  <div class="container">
+    <div class="card">
+      <div class="meta"><div id="stepCounter">ステップ 1 / 6</div><div class="small">必須入力</div></div>
+      <div class="progress"><span id="progressFill"></span></div>
+      <div id="steps"></div>
+      <div class="nav"><button id="prevBtn" class="btn secondary">戻る</button><button id="nextBtn" class="btn">次へ</button></div>
+    </div>
+    <div id="result" class="card result">
+      <div class="top-ai"><span class="top-ai-badge">診断結果</span><div id="topName" style="font-weight:800"></div><div id="confidence" class="kicker"></div></div>
+      <div class="bars" id="bars"></div>
+      <div class="copy"><input id="shareUrl" readonly><button id="copyBtn" class="btn secondary">リンクをコピー</button><button id="retryBtn" class="btn">再診断</button></div>
+      <div class="small" style="margin-top:6px">対象例：ChatGPT / Claude / Gemini / Perplexity / Midjourney / Copilot</div>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="container">© AI Fit Finder</div>
+</footer>
+<script>
+const CONFIG={version:1,ais:[{id:"chatgpt",label:"ChatGPT"},{id:"claude",label:"Claude"},{id:"gemini",label:"Gemini"},{id:"perplexity",label:"Perplexity"},{id:"midjourney",label:"Midjourney"},{id:"copilot",label:"Copilot"}],questions:[{id:"q1",title:"主な用途",required:true,options:[{label:"文章生成・発想支援",weights:{chatgpt:3,claude:3,gemini:2,perplexity:1,midjourney:0,copilot:1}},{label:"コーディング支援",weights:{chatgpt:2,claude:1,gemini:1,perplexity:0,midjourney:0,copilot:3}},{label:"画像生成",weights:{chatgpt:1,claude:0,gemini:1,perplexity:0,midjourney:3,copilot:0}},{label:"Web検索・要約",weights:{chatgpt:1,claude:1,gemini:2,perplexity:3,midjourney:0,copilot:0}}]},{id:"q2",title:"使い方のスタイル",required:true,options:[{label:"チャットで深掘り",weights:{chatgpt:3,claude:3,gemini:2,perplexity:1,midjourney:0,copilot:1}},{label:"高精度の検索＋要約",weights:{chatgpt:1,claude:1,gemini:2,perplexity:3,midjourney:0,copilot:0}},{label:"エディタで補完中心",weights:{chatgpt:1,claude:0,gemini:0,perplexity:0,midjourney:0,copilot:3}},{label:"プロンプトで画像生成",weights:{chatgpt:0,claude:0,gemini:1,perplexity:0,midjourney:3,copilot:0}}]},{id:"q3",title:"機密・安全性の重視度",required:true,options:[{label:"高い",weights:{chatgpt:2,claude:3,gemini:2,perplexity:1,midjourney:0,copilot:2}},{label:"ふつう",weights:{chatgpt:1,claude:1,gemini:1,perplexity:1,midjourney:1,copilot:1}},{label:"低い",weights:{chatgpt:0,claude:0,gemini:0,perplexity:1,midjourney:2,copilot:0}}]},{id:"q4",title:"予算・契約イメージ",required:true,options:[{label:"無料/低コスト重視",weights:{chatgpt:1,claude:1,gemini:3,perplexity:3,midjourney:0,copilot:0}},{label:"個人でサブスクOK",weights:{chatgpt:3,claude:2,gemini:1,perplexity:1,midjourney:3,copilot:1}},{label:"企業利用を想定",weights:{chatgpt:3,claude:3,gemini:2,perplexity:1,midjourney:0,copilot:3}}]},{id:"q5",title:"出力の中心",required:true,options:[{label:"テキスト中心",weights:{chatgpt:3,claude:3,gemini:2,perplexity:2,midjourney:0,copilot:1}},{label:"画像中心",weights:{chatgpt:0,claude:0,gemini:1,perplexity:0,midjourney:3,copilot:0}},{label:"コード中心",weights:{chatgpt:2,claude:1,gemini:1,perplexity:0,midjourney:0,copilot:3}}]},{id:"q6",title:"重視する連携",required:true,options:[{label:"Microsoft連携",weights:{chatgpt:1,claude:0,gemini:0,perplexity:0,midjourney:0,copilot:3}},{label:"Google連携",weights:{chatgpt:0,claude:0,gemini:3,perplexity:0,midjourney:0,copilot:0}},{label:"検索・外部サイト連携",weights:{chatgpt:1,claude:1,gemini:2,perplexity:3,midjourney:0,copilot:0}},{label:"特になし",weights:{chatgpt:2,claude:2,gemini:1,perplexity:1,midjourney:1,copilot:1}}]}]};
+const stepsEl=document.getElementById('steps');
+const prevBtn=document.getElementById('prevBtn');
+const nextBtn=document.getElementById('nextBtn');
+const stepCounter=document.getElementById('stepCounter');
+const progressFill=document.getElementById('progressFill');
+const resultEl=document.getElementById('result');
+const topName=document.getElementById('topName');
+const barsEl=document.getElementById('bars');
+const confidenceEl=document.getElementById('confidence');
+const shareUrl=document.getElementById('shareUrl');
+const copyBtn=document.getElementById('copyBtn');
+const retryBtn=document.getElementById('retryBtn');
+let current=0;let answers=Array(CONFIG.questions.length).fill(null);
+function render(){stepsEl.innerHTML='';CONFIG.questions.forEach((q,qi)=>{const s=document.createElement('div');s.className='step'+(qi===current?' active':'');const o=q.options.map((opt,oi)=>{const id=`${q.id}_${oi}`;const checked=answers[qi]===oi?" checked":"";return `<label class="opt"><input type="radio" name="${q.id}" value="${oi}"${checked} required><div><div style="font-weight:700">${opt.label}</div></div></label>`}).join('');s.innerHTML=`<div class="step-title">${q.title}<span class="required">必須</span></div><div class="opts">${o}</div>`;stepsEl.appendChild(s)});updateMeta();bindRadios()}
+function bindRadios(){CONFIG.questions.forEach((q,qi)=>{document.querySelectorAll(`input[name="${q.id}"]`).forEach(r=>{r.addEventListener('change',e=>{answers[qi]=parseInt(e.target.value,10);updateButtons()})})})}
+function updateMeta(){stepCounter.textContent=`ステップ ${current+1} / ${CONFIG.questions.length}`;const pct=Math.round(((answers.filter(v=>v!==null).length)+(answers[current]===null?0:0))/CONFIG.questions.length*100);progressFill.style.width=`${Math.max( (current)/CONFIG.questions.length*100, pct)}%`;prevBtn.disabled=current===0;nextBtn.textContent=current===CONFIG.questions.length-1?"結果を見る":"次へ";updateButtons()}
+function updateButtons(){const need=answers[current]!==null;nextBtn.disabled=!need}
+function gotoStep(n){document.querySelectorAll('.step').forEach((el,i)=>{el.classList.toggle('active',i===n)});current=n;updateMeta()}
+function computeScores(){const scores={};CONFIG.ais.forEach(ai=>scores[ai.id]=0);CONFIG.questions.forEach((q,qi)=>{const sel=answers[qi];if(sel===null)return;const w=q.options[sel].weights;for(const k in w){scores[k]+=w[k]||0}});return scores}
+function toSortedArray(scores){return Object.entries(scores).map(([id,score])=>({id,score,label:CONFIG.ais.find(a=>a.id===id).label})).sort((a,b)=>b.score-a.score)}
+function showResult(){const scores=computeScores();const arr=toSortedArray(scores);const top=arr[0];const second=arr[1]||{score:0};const confRaw=(top.score-second.score)/Math.max(1,top.score);let confLabel="";if(confRaw>=.25)confLabel="信頼度: 高";else if(confRaw>=.15)confLabel="信頼度: 中";else confLabel="信頼度: 低";topName.textContent=top.label;confidenceEl.textContent=`${confLabel}（差分 ${top.score-second.score}）`;barsEl.innerHTML='';const top3=arr.slice(0,3);const maxScore=Math.max(...top3.map(x=>x.score),1);top3.forEach(x=>{const row=document.createElement('div');row.className='bar';row.innerHTML=`<div class="bar-label"><span>${x.label}</span><span>${x.score}</span></div><div class="bar-track"><div class="bar-fill" style="width:${(x.score/maxScore)*100}%"></div></div>`;barsEl.appendChild(row)});const url=buildShareURL();shareUrl.value=url;document.querySelectorAll('.step').forEach(el=>el.classList.remove('active'));document.querySelector('.nav').style.display='none';document.querySelector('.progress').style.display='none';document.querySelector('.meta').style.display='none';resultEl.classList.add('active');location.hash='#wizard'}
+function buildShareURL(){const ans=answers.map(v=>v??0).join('-');const u=new URL(location.href);u.searchParams.set('v',String(CONFIG.version));u.searchParams.set('ans',ans);u.hash='wizard';return u.toString()}
+function loadFromURL(){const p=new URL(location.href).searchParams;const v=parseInt(p.get('v')||'0',10);const a=(p.get('ans')||'').split('-').map(s=>s===''?null:parseInt(s,10));if(v===CONFIG.version&&a.length===CONFIG.questions.length&&a.every(n=>Number.isInteger(n)&&n>=0&&n<10)){answers=a;render();showResult()}}
+prevBtn.addEventListener('click',()=>{if(current>0)gotoStep(current-1)});
+nextBtn.addEventListener('click',()=>{if(answers[current]===null)return;if(current<CONFIG.questions.length-1){gotoStep(current+1)}else{showResult()}});
+copyBtn.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(shareUrl.value);copyBtn.textContent='コピーしました';setTimeout(()=>copyBtn.textContent='リンクをコピー',1200)}catch{shareUrl.select();document.execCommand('copy')}});
+retryBtn.addEventListener('click',()=>{answers=Array(CONFIG.questions.length).fill(null);current=0;resultEl.classList.remove('active');document.querySelector('.nav').style.display='flex';document.querySelector('.progress').style.display='block';document.querySelector('.meta').style.display='flex';render();gotoStep(0)})
+render();loadFromURL();
+</script>
+</body>
+</html>
