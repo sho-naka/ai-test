@@ -204,6 +204,46 @@ function escapeHtml(s){
 // --- 起動 ---
 document.addEventListener('DOMContentLoaded', ()=>{
   initOptions();
-  $('#diagForm').addEventListener('submit', onSubmit);
-  $('#exportJson').addEventListener('click', (e)=>{e.preventDefault(); $('#howto').showModal();});
+  const form = $('#diagForm');
+  if(form) form.addEventListener('submit', onSubmit);
+
+  // optional element used elsewhere; guard its existence
+  const exportBtn = $('#exportJson');
+  if(exportBtn) exportBtn.addEventListener('click', (e)=>{e.preventDefault(); const howto = $('#howto'); howto && howto.showModal && howto.showModal();});
+
+  // API Test button wiring
+  const apiTestBtn = document.getElementById('apiTestBtn');
+  const apiResultDiv = document.getElementById('apiTestResult');
+  if(apiTestBtn && apiResultDiv){
+    apiTestBtn.addEventListener('click', async function(){
+      apiTestBtn.disabled = true; apiTestBtn.textContent = 'Testing...'; apiResultDiv.textContent = '';
+      const dummyPayload = {
+        prefecture: '東京都',
+        city: '新宿区',
+        industry: '製造',
+        businessDescription: 'デモ用の事業概要：店舗での製造販売を行っており、省エネ設備導入を検討しています。',
+        purchaseItems: '高効率エアコン、LED照明',
+        note: 'テスト送信です',
+        budget: 5000000
+      };
+      try{
+  const res = await fetch('http://localhost:8080/api/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+          body: JSON.stringify(dummyPayload)
+        });
+        if(!res.ok){
+          const txt = await res.text();
+          apiResultDiv.innerText = 'Error: ' + res.status + '\n' + txt;
+        }else{
+          const json = await res.json();
+          apiResultDiv.innerHTML = '<pre style="white-space:pre-wrap;">' + escapeHtml(JSON.stringify(json, null, 2)) + '</pre>';
+        }
+      }catch(err){
+        apiResultDiv.innerText = 'Request failed: ' + (err && err.message? err.message: String(err));
+      }finally{
+        apiTestBtn.disabled = false; apiTestBtn.textContent = 'Test';
+      }
+    });
+  }
 });

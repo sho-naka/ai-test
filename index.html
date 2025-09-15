@@ -36,13 +36,14 @@
           <div class="step-dot" data-dot="4"><div class="step-num">4</div><div class="step-label">購入品・金額</div></div>
           <div id="bar" class="bar"></div>
         </div>
-        <!-- フォーム（各ステップカード） -->
+  <!-- フォーム（各ステップカード） -->
         <form id="diagForm">
           <div class="step" data-step="0">
             <h3>ようこそ — 補助金ミニ診断へ</h3>
             <p class="muted">情報はあとで入力できます。まずはスタートを押して進めてください。</p>
             <div style="margin-top:12px">
               <button id="startBtn" data-dot="0" type="button" class="btn-primary" style="appearance:none;border:none;padding:12px 28px;border-radius:20px;background:linear-gradient(90deg,#ff3e8a,#ff1166);color:#fff;font-weight:700;font-size:16px;box-shadow:0 8px 18px rgba(0,0,0,.08);cursor:pointer">スタート ▶</button>
+              <button id="apiTestBtn" type="button" class="btn-ghost" style="margin-left:8px;padding:8px 12px;border-radius:8px;">Test</button>
             </div>
           </div>
 
@@ -70,6 +71,8 @@
         </form>
 
   <!-- (Start ボタンは step0 内に配置済み) -->
+    <!-- API テスト結果表示領域 -->
+    <div id="apiTestResult" style="padding:12px;margin:12px 0;max-width:900px;"><!-- API レスポンスがここに表示されます --></div>
   </main>
 
   <!-- 結果ページ（診断結果をここに表示） -->
