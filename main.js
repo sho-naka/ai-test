@@ -214,6 +214,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
   // API Test button wiring
   const apiTestBtn = document.getElementById('apiTestBtn');
   const apiResultDiv = document.getElementById('apiTestResult');
+  // Determine API base for local development:
+  // - When front-end is served from a static dev server (e.g. Live Server on 5500),
+  //   relative '/api/...' would target that static server and POST will 405.
+  // - Detect localhost and point to backend dev port (3000) automatically.
+  const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:3000'
+    : '';
   if(apiTestBtn && apiResultDiv){
     apiTestBtn.addEventListener('click', async function(){
       apiTestBtn.disabled = true; apiTestBtn.textContent = 'Testing...'; apiResultDiv.textContent = '';
@@ -226,12 +233,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
         note: 'テスト送信です',
         budget: 5000000
       };
-      try{
-  const res = await fetch('http://localhost:8080/api/search', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json; charset=UTF-8' },
-          body: JSON.stringify(dummyPayload)
-        });
+          try{
+            // Use API_BASE so local static dev servers route to backend (http://localhost:3000)
+            // and deployed frontends call same-origin /api
+            const res = await fetch(`${API_BASE}/api/search`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+              body: JSON.stringify(dummyPayload)
+            });
         if(!res.ok){
           const txt = await res.text();
           apiResultDiv.innerText = 'Error: ' + res.status + '\n' + txt;

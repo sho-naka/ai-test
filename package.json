@@ -1,0 +1,17 @@
+{
+  "name": "ai-test",
+  "version": "0.1.0",
+  "private": true,
+  "main": "api/index.js",
+  "scripts": {
+    "dev": "node api-node/src/dev.js",
+    "start": "node api/launcher.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^6.0.1",
+    "morgan": "^1.10.0",
+    "serverless-http": "^3.0.0"
+  }
+}

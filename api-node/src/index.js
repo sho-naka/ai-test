@@ -21,4 +21,8 @@ app.get('/api/health', (req,res)=>res.send('ok'));
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(PORT, ()=>console.log(`api-node listening on ${PORT}`));
+// Export the Express app so it can be started by a separate runner (Vercel or local dev)
+module.exports = app;
+
+// For interop, also export default
+module.exports.default = app;
