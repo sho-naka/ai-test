@@ -1,5 +1,3 @@
-// Serverless wrapper for Vercel: export a handler that wraps the Express app.
-const serverless = require('serverless-http');
-const app = require('../api-node/src/index.js');
-
-module.exports = serverless(app);
+// This file intentionally delegates to the catch-all handler at api/[...slug].js
+// Keeping this file avoids accidental 404s for /api but the catch-all is preferred.
+module.exports = require('./[...slug].js');

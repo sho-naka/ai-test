@@ -211,20 +211,17 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const exportBtn = $('#exportJson');
   if(exportBtn) exportBtn.addEventListener('click', (e)=>{e.preventDefault(); const howto = $('#howto'); howto && howto.showModal && howto.showModal();});
 
-  // API Test button wiring
-  const apiTestBtn = document.getElementById('apiTestBtn');
+  // API Test2 (direct minimal handler) — keep only this
   const apiResultDiv = document.getElementById('apiTestResult');
-  // Determine API base for local development:
-  // - When front-end is served from a static dev server (e.g. Live Server on 5500),
-  //   relative '/api/...' would target that static server and POST will 405.
-  // - Detect localhost and point to backend dev port (3000) automatically.
+  // Determine API base for local development
   const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:3000'
     : '';
-  if(apiTestBtn && apiResultDiv){
-    apiTestBtn.addEventListener('click', async function(){
-      apiTestBtn.disabled = true; apiTestBtn.textContent = 'Testing...'; apiResultDiv.textContent = '';
-      const dummyPayload = {
+  const apiTest2Btn = document.getElementById('apiTest2Btn');
+  if(apiTest2Btn && apiResultDiv){
+    apiTest2Btn.addEventListener('click', async function(){
+      apiTest2Btn.disabled = true; apiTest2Btn.textContent = 'Testing...'; apiResultDiv.textContent = '';
+      const payload = {
         prefecture: '東京都',
         city: '新宿区',
         industry: '製造',
@@ -233,14 +230,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
         note: 'テスト送信です',
         budget: 5000000
       };
-          try{
-            // Use API_BASE so local static dev servers route to backend (http://localhost:3000)
-            // and deployed frontends call same-origin /api
-            const res = await fetch(`${API_BASE}/api/search`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json; charset=UTF-8' },
-              body: JSON.stringify(dummyPayload)
-            });
+      try{
+        // Always call direct-search; local uses API_BASE to point to dev server
+        const target = API_BASE === '' ? '/api/direct-search' : `${API_BASE}/api/direct-search`;
+        const res = await fetch(target, { method: 'POST', headers: { 'Content-Type': 'application/json; charset=UTF-8' }, body: JSON.stringify(payload) });
         if(!res.ok){
           const txt = await res.text();
           apiResultDiv.innerText = 'Error: ' + res.status + '\n' + txt;
@@ -251,8 +244,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
       }catch(err){
         apiResultDiv.innerText = 'Request failed: ' + (err && err.message? err.message: String(err));
       }finally{
-        apiTestBtn.disabled = false; apiTestBtn.textContent = 'Test';
+        apiTest2Btn.disabled = false; apiTest2Btn.textContent = 'Test2';
       }
     });
   }
+  // (Test2 handler is defined above; duplicate removed)
 });
